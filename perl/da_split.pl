@@ -71,7 +71,7 @@ while (my $file = $workingDir->next) {
         $endPos = $endPos >= 0 ? $endPos : rindex $daUser, ".";
         unless ($endPos >= 0) {
             $skiped++;
-            print $file->basename . "skiped\n" if defined $options{s};
+            print $file->basename . " skiped\n" if defined $options{s};
             next;
         }
         $daUser = substr $daUser, 0, $endPos;
@@ -100,5 +100,5 @@ while (my $file = $workingDir->next) {
     last if defined $options{l} && $counter >= $options{l};
 }
 
-print "$counter element(s) moved.\n";
-print "$skiped element(s) skiped.\n";
+print "    $counter element(s) moved.\n";
+print "    $skiped element(s) skiped.\n";
