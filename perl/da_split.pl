@@ -50,13 +50,18 @@ print "\n" if defined $options{s};
 my $workingDir = dir($workingDirectory);
 my $outputDir = dir($outputDirectory);
 my $counter = 0;
+my $skiped = 0;
 
 while (my $file = $workingDir->next) {
     next if $file eq $workingDir->parent || $file eq $workingDirectory;
 
     my $startPos = rindex $file->basename, "_by_";
     $startPos = $startPos >= 0 ? $startPos : rindex $file->basename, " by ";
-    next unless $startPos >= 0;
+    unless ($startPos >= 0) {
+        $skiped++;
+        print $file->basename . "skiped\n" if defined $options{s};
+        next;
+    }
     $startPos += 4;
 
     my $daUser = substr $file->basename, $startPos;
@@ -64,15 +69,17 @@ while (my $file = $workingDir->next) {
     unless ($file->is_dir()) {
         my $endPos = rindex $daUser, "-";
         $endPos = $endPos >= 0 ? $endPos : rindex $daUser, ".";
-        next unless $endPos >= 0;
+        unless ($endPos >= 0) {
+            $skiped++;
+            print $file->basename . "skiped\n" if defined $options{s};
+            next;
+        }
         $daUser = substr $daUser, 0, $endPos;
     }
 
     my $daUserDirectory = catfile $outputDirectory, $daUser;
 
-    if (-e -d $daUserDirectory) {
-        print "$daUser directory already exists in output directory.\n" if defined $options{s};
-    } else {
+    unless (-e -d $daUserDirectory) {
         make_path($daUserDirectory, {
             verbose => defined $options{s} ? 1 : 0
         });
@@ -82,6 +89,7 @@ while (my $file = $workingDir->next) {
 
     if (-e $newLocation) {
         print $file->basename . " file already exists in '$daUser' folder.\n" if defined $options{s};
+        $skiped++;
         next;
     }
 
@@ -89,7 +97,8 @@ while (my $file = $workingDir->next) {
     print $file->basename . " -> $daUser\n" if defined $options{s};
 
     $counter ++;
-    last if defined $options{l} && $counter == $options{l};
+    last if defined $options{l} && $counter >= $options{l};
 }
 
 print "$counter element(s) moved.\n";
+print "$skiped element(s) skiped.\n";
