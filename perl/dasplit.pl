@@ -59,7 +59,7 @@ while (my $file = $workingDir->next) {
     $startPos = $startPos >= 0 ? $startPos : rindex $file->basename, " by ";
     unless ($startPos >= 0) {
         $skiped++;
-        print $file->basename . "skiped\n" if defined $options{s};
+        print $file->basename . " skiped\n" if defined $options{s};
         next;
     }
     $startPos += 4;
