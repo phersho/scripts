@@ -59,7 +59,7 @@ while (my $file = $workingDir->next) {
     $startPos = $startPos >= 0 ? $startPos : rindex $file->basename, " by ";
     unless ($startPos >= 0) {
         $skiped++;
-        print $file->basename . " skiped\n" if defined $options{s};
+        print "   - " . $file->basename . " skiped\n" if defined $options{s};
         next;
     }
     $startPos += 4;
@@ -71,7 +71,7 @@ while (my $file = $workingDir->next) {
         $endPos = $endPos >= 0 ? $endPos : rindex $daUser, ".";
         unless ($endPos >= 0) {
             $skiped++;
-            print $file->basename . " skiped\n" if defined $options{s};
+            print "   - " . $file->basename . " skiped\n" if defined $options{s};
             next;
         }
         $daUser = substr $daUser, 0, $endPos;
@@ -88,17 +88,17 @@ while (my $file = $workingDir->next) {
     my $newLocation = catfile $daUserDirectory, $file->basename;
 
     if (-e $newLocation) {
-        print $file->basename . " file already exists in '$daUser' folder.\n" if defined $options{s};
+        print "   - " . $file->basename . " file already exists in '$daUser' folder.\n" if defined $options{s};
         $skiped++;
         next;
     }
 
     move $file, $newLocation;
-    print $file->basename . " -> $daUser\n" if defined $options{s};
+    print "   - " . $file->basename . " -> $daUser\n" if defined $options{s};
 
     $counter ++;
     last if defined $options{l} && $counter >= $options{l};
 }
 
-print "    $counter element(s) moved.\n";
-print "    $skiped element(s) skiped.\n";
+print "  $counter element(s) moved.\n";
+print "  $skiped element(s) skiped.\n";
